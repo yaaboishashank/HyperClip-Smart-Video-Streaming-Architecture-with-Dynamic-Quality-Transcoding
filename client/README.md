@@ -1,123 +1,393 @@
-# HyperClip — client
+# HyperClip — Frontend
 
-The complete React frontend for your existing HyperClip Express backend. Red Signal theme, light/dark mode, responsive layouts, and real API data. This archive contains only `client/`; it does not change your `Server` folder.
+The React frontend for HyperClip, a full-stack video-sharing application.
 
-## Start locally
+HyperClip brings video playback, creator tools and community interactions into a responsive interface. The design uses a red accent, clear typography and light and dark themes.
 
-Use Node.js 22.12+ (Node 24 also works).
+## Features
 
-1. Extract this ZIP into your `hyperClip` project so `client` and `Server` sit beside each other. Open `client/package.json` to confirm you did not accidentally create `client/client`.
-2. Start your existing backend in one terminal:
+- Account registration and login.
+- Video browsing and watch pages.
+- Video playback with manual quality selection.
+- Playback position preservation during quality changes.
+- Video uploads with thumbnail previews.
+- Background processing status and retry controls.
+- Creator Studio for managing uploaded videos.
+- Video editing, publication controls and deletion.
+- Channel profiles and subscriptions.
+- Comments and likes.
+- Playlists and watch history.
+- Profile and account settings.
+- Light and dark themes.
+- Loading states and error feedback.
 
-   ```bash
-   cd Server
-   npm run dev
-   ```
+## Tech Stack
 
-3. Open another terminal at the `hyperClip` root:
+| Technology | Purpose |
+| --- | --- |
+| React | Component-based interface |
+| Vite | Development server and production builds |
+| React Router | Client-side navigation |
+| Context and custom hooks | Authentication and shared application behavior |
+| Fetch API | Backend requests |
+| Lucide React | Interface icons |
+| CSS | Styling, layout and responsive design |
 
-   ```bash
-   cd client
-   npm ci
-   npm run dev
-   ```
+The frontend is written in JavaScript and JSX.
 
-4. Open **http://localhost:5173**. Register with a profile image or sign in with your existing account.
+## Project Structure
 
-Run install commands inside `client`. There is no root package or workspace configuration. Dependencies go into `client/node_modules`, which is intentionally excluded from this ZIP.
+| Path | Responsibility |
+| --- | --- |
+| `src/App.jsx` | Application composition |
+| `src/main.jsx` | React entry point |
+| `src/components/common/` | Shared buttons, feedback and interface components |
+| `src/components/layout/` | Application layout and navigation |
+| `src/components/video/` | Video player, cards and playlist controls |
+| `src/components/comments/` | Comment interface |
+| `src/context/` | Shared application context |
+| `src/hooks/` | Authentication, data loading and processing hooks |
+| `src/pages/` | Application pages |
+| `src/services/` | API request helpers and endpoint services |
+| `src/utils/` | Formatting, validation and media helpers |
+| `src/styles/` | Application styling |
+| `public/` | Public static assets |
 
-## Backend connection
+## Getting Started
 
-The default connection works without a client `.env` file:
+### 1. Prerequisites
 
-- Browser: `http://localhost:5173`
-- Browser API requests: `/api/v1/...`
-- Vite proxy target: `http://127.0.0.1:8000`
-- Backend response: `{ statusCode, data, message, success }`
+- Node.js 22.12 or newer.
+- npm.
+- The HyperClip backend configured and running for local API access.
 
-Your server should already have `PORT=8000`, `CORS_ORIGIN=http://localhost:5173`, and development cookie settings (`NODE_ENV=development`). Keep MongoDB, JWT and Cloudinary credentials exclusively in `Server/.env`.
+### 2. Install Dependencies
 
-To change the backend address, copy `.env.example` to `.env`, edit `HYPERCLIP_PROXY_TARGET`, then restart Vite. Leave `VITE_API_BASE_URL=/api/v1` for the included proxy setup. No secrets belong in client environment variables.
+From the repository root:
 
-Use `localhost` consistently in the browser. Vite deliberately keeps port 5173: if it is occupied, stop your other frontend terminal with Ctrl+C before starting this one.
+```bash
+cd client
+npm ci
+```
 
-## Included pages and features
+### 3. Start the Development Server
 
-- Login, registration, cookie-based session restoration, token refresh, logout.
-- Home feed, title/description search, sorting, pagination.
-- Video upload with thumbnail and matching backend file limits.
-- Watch page, native video controls, views/history recording on playback.
-- Video/comment/community-post likes; comments with owner edit/delete.
-- Channel profiles, subscriptions and community posts.
-- Playlists: create, edit, delete, save/remove videos.
-- Watch history and liked videos.
-- Creator studio: statistics, uploads, edit details/thumbnail, publish/unpublish, delete.
-- Settings: profile details, avatar, cover image, password and appearance.
-- Loading, empty, error, retry and confirmation states.
+```bash
+npm run dev
+```
 
-The feed and product pages require login, matching your backend's protected routes. An empty database shows an empty state. No fake users, videos, statistics or demo media are included.
+Open:
 
-## Source guide
+```text
+http://localhost:5173
+```
 
-| Location                      | Responsibility                                         |
-| ----------------------------- | ------------------------------------------------------ |
-| `src/main.jsx`, `src/App.jsx` | Application entry and session initialization           |
-| `src/routes/`                 | URLs and protected routes                              |
-| `src/pages/`                  | Page composition and forms                             |
-| `src/components/layout/`      | Header, sidebar and responsive application layout      |
-| `src/components/common/`      | Shared controls, dialogs, feedback and community posts |
-| `src/components/video/`       | Player, cards, grids and save-to-playlist dialog       |
-| `src/components/comments/`    | Comments and editing                                   |
-| `src/services/`               | API calls grouped by backend module                    |
-| `src/context/`                | Authentication and theme state                         |
-| `src/hooks/`                  | Reusable auth, theme and request hooks                 |
-| `src/styles/`                 | Theme tokens and responsive styles                     |
-| `src/utils/`                  | Formatting and upload validation                       |
+The configured development port is `5173`. With `strictPort` enabled, Vite reports an error if this port is already occupied.
 
-Start learning with `main.jsx`, then `routes/AppRoutes.jsx`, `services/api.js`, and `pages/Home.jsx`. Every API service returns the backend's `data` property. Forms send the exact field names expected by your server. The playlist API base is singular: `/api/v1/playlist`.
+### 4. Start the Backend
 
-`fetch` sends cookies with `credentials: 'include'`. Parallel expired requests share one refresh request, then each retries once. Tokens are not stored in localStorage; only the selected theme is stored there. Server validation and ownership checks remain authoritative.
+Open another terminal from the repository root:
 
-## Backend behavior reflected in the interface
+```bash
+cd Server
+npm run dev
+```
 
-- Profile/thumbnail images: JPG, JPEG, PNG, WEBP; maximum 5 MiB each.
-- Videos: MP4, WEBM, MOV; maximum 100,000,000 bytes. Browser codec support can vary; an MP4 with H.264/AAC is a useful first upload.
-- Uploads show a busy state. There is no invented percentage or background upload queue.
-- Your likes API provides toggle results but no initial read-only status. The initial button says **Like / unlike**; after clicking, it displays the server's actual status and count.
-- Watch history uses `POST /api/v1/users/history/:videoId`, once on the first play during each watch-page visit. History saving errors do not block playback. Your server returns the latest 100 history entries.
-- Community posts use the existing `/tweets` endpoints.
-- This frontend does not add FFmpeg transcoding, selectable output resolutions, HLS streaming, password-reset emails, notifications or other features absent from your backend.
+The frontend development proxy forwards `/api` requests to:
 
-## Verify with your server
+```text
+http://127.0.0.1:8000
+```
 
-1. Register with a small JPG/PNG avatar, then sign in.
-2. Upload a small MP4 with a thumbnail, title and description.
-3. Play it and check Watch history. Add/edit a comment and save the video to a playlist.
-4. Use a second account to subscribe to your first channel.
-5. In Creator studio, edit your own video and try publish/unpublish.
-6. In Settings, update your details and check both themes. Changing your password signs you out.
+### 5. Start Video Processing When Needed
 
-The production build and browser flows were checked against isolated API fixtures matching the reviewed server contracts, including authentication refresh, multipart uploads, comments, playlists, subscriptions, community posts, studio editing, settings and mobile navigation. Live MongoDB/Cloudinary operations and actual media playback still need the local verification above. QA fixtures and tools are not included in this ZIP.
+To process new uploads, open another terminal:
 
-## Build
+```bash
+cd Server
+npm run worker
+```
+
+The worker belongs to the backend. The frontend displays processing progress returned by the API.
+
+Without a running worker, newly uploaded videos can remain pending.
+
+## Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Create the production build |
+| `npm run preview` | Preview the production build locally |
+
+## API Configuration
+
+The application uses the relative API base:
+
+```js
+const base = "/api/v1";
+```
+
+### Local Development
+
+Vite proxies `/api` requests to the backend.
+
+The default target is:
+
+```text
+http://127.0.0.1:8000
+```
+
+To use a different local backend address, create `client/.env.local`:
+
+```dotenv
+HYPERCLIP_PROXY_TARGET=http://127.0.0.1:8000
+```
+
+Restart Vite after changing this value.
+
+### Production
+
+The current deployment serves the frontend and API from the same Express service.
+
+Browser requests to `/api/v1` reach the API on the same domain.
+
+The Vite proxy is used for local development and preview; it is not included as a server in the generated production files.
+
+Never place database credentials, Cloudinary API secrets or JWT signing secrets in frontend code or environment variables exposed to the browser.
+
+## Authentication
+
+Authentication is managed through the backend using HTTP-only cookies.
+
+The shared API helper:
+
+- Includes cookies using `credentials: "include"`.
+- Sends JSON or multipart request bodies.
+- Handles API and connection errors.
+- Attempts session refresh after eligible `401` responses.
+- Coordinates concurrent token-refresh requests.
+- Notifies the application when the session expires.
+
+HTTP-only authentication cookies are managed by the browser and cannot be read directly by React.
+
+## Video Playback
+
+The video player reads available qualities from the video's `variants` array.
+
+Each variant contains a playback URL and a label such as:
+
+```text
+240p
+360p
+480p
+720p
+```
+
+The options shown depend on what the backend generated for that video.
+
+### Quality Switching
+
+When changing quality, the player preserves playback state, including the position and whether the video was playing.
+
+Older videos without generated variants can fall back to their original video URL.
+
+The frontend does not generate video qualities. Encoding happens in the backend worker.
+
+Playback uses separate MP4 files with manual quality selection. This implementation does not provide automatic adaptive bitrate streaming.
+
+## Upload Flow
+
+1. Choose a video.
+2. Choose a thumbnail.
+3. Enter a title and description.
+4. Submit the upload.
+5. The API saves the media and queues processing.
+6. Open Creator Studio to follow the processing status.
+7. Play the video after processing completes.
+
+The upload page provides a thumbnail preview and basic client-side validation. The backend also validates uploads.
+
+### Upload Limits
+
+| Field | Limit |
+| --- | --- |
+| Video | 100 MB |
+| Thumbnail | 5 MB |
+| Video duration | 10 minutes |
+| Title | 120 characters |
+| Description | 5,000 characters |
+
+Supported video formats:
+
+```text
+MP4, WEBM, MOV
+```
+
+Supported thumbnail formats:
+
+```text
+JPG, JPEG, PNG, WEBP
+```
+
+Video duration is checked during backend processing.
+
+If an upload connection is interrupted, check Creator Studio before submitting again—the backend may already have saved the upload.
+
+## Processing Status
+
+The interface displays the processing state returned by the API.
+
+| Status | Meaning |
+| --- | --- |
+| `pending` | Waiting for a worker |
+| `processing` | Preparing video qualities |
+| `ready` | Available for playback |
+| `failed` | Processing failed or was interrupted |
+
+Eligible failed jobs can be retried through the application.
+
+The processing hook is located at:
+
+```text
+src/hooks/useVideoProcessing.js
+```
+
+## Main Application Areas
+
+### Watch Page
+
+Combines video playback with:
+
+- Quality selection.
+- Creator information.
+- Subscription controls.
+- Likes and playlist actions.
+- Video description and view count.
+- Comments.
+- Recommended videos.
+
+### Creator Studio
+
+Provides access to uploaded videos, processing status and video management actions.
+
+### Channels
+
+Displays creator profiles and their available content.
+
+### Playlists and History
+
+Helps users organize videos and revisit previously watched content.
+
+### Account Settings
+
+Provides account and profile management controls.
+
+## Build and Preview
+
+Create a production build:
 
 ```bash
 npm run build
 ```
 
-This generates `client/dist`. To inspect the build locally, stop the dev server and run `npm run preview`, also at port 5173 with the local API proxy.
+Generated files are written to:
 
-For deployment, host `dist` with a fallback to `index.html` for frontend routes and route `/api` to your running backend. Use HTTPS and the server's production cookie settings. Vite's development proxy is not a production server.
+```text
+client/dist/
+```
 
-## Common issues
+Preview the build locally:
 
-| Symptom                                      | What to check                                                                           |
-| -------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Cannot reach HyperClip / unreadable response | Backend is listening on 8000; check its terminal and the proxy target.                  |
-| Repeated sign-in / 401                       | Sign in again, use `localhost` consistently, check development cookies and JWT secrets. |
-| CORS error                                   | Backend origin matches `http://localhost:5173`; avoid `*` with credentialed requests.   |
-| Upload fails                                 | File format/size, required fields, Cloudinary setup and backend terminal.               |
-| API route not found                          | Use your completed backend controllers/routes, including the history POST route.        |
-| No videos                                    | Upload one; the frontend displays real backend records.                                 |
+```bash
+npm run preview
+```
 
-No backend source, credentials, `node_modules`, generated `dist`, test folders or root-level scripts are shipped.
+The configured preview server uses port `5173`, so stop the development server first if it is already using that port.
+
+For API requests during local preview, keep the backend running.
+
+## Current Deployment
+
+The project uses one Render web service to serve:
+
+- The Express API.
+- The compiled React frontend.
+
+Build command from the repository root:
+
+```bash
+npm ci --prefix Server && npm ci --prefix client --include=dev && npm run build --prefix client
+```
+
+Start command:
+
+```bash
+npm start --prefix Server
+```
+
+The backend must use:
+
+```dotenv
+NODE_ENV=production
+```
+
+Its production configuration serves `client/dist` and returns the frontend entry page for application routes.
+
+This allows direct links and browser refreshes on frontend pages to work.
+
+### Background Worker
+
+In the current demo setup, video processing runs on the developer's laptop.
+
+The worker must use the same database and Cloudinary account as the hosted API.
+
+The hosted frontend remains separate from the laptop's development server. Already processed videos do not require the laptop worker for playback.
+
+## Troubleshooting
+
+| Problem | What to check |
+| --- | --- |
+| `ECONNREFUSED` in the Vite terminal | Backend startup, port and proxy target |
+| Login fails | API response, cookies and backend configuration |
+| Upload connection is interrupted | Check Studio before retrying, then inspect backend logs |
+| Video remains pending | Whether the backend worker is running |
+| Only one quality appears | Generated variants and source dimensions |
+| A quality does not play | Its media URL and browser network errors |
+| Hosted homepage returns JSON 404 | Backend production static-file serving |
+| Refreshing a hosted page returns 404 | Frontend route fallback in the hosting server |
+| Port `5173` is unavailable | Another development or preview server may be running |
+
+## Verification Checklist
+
+- [ ] `npm run build` completes successfully.
+- [ ] Registration and login work.
+- [ ] Login persists after refreshing the page.
+- [ ] Logout clears the session.
+- [ ] Video browsing and playback work.
+- [ ] Quality switching preserves playback position.
+- [ ] Upload validation displays helpful feedback.
+- [ ] Processing status updates in the interface.
+- [ ] Eligible failed jobs can be retried.
+- [ ] A disposable video can be deleted from Studio.
+- [ ] Comments, likes and subscriptions work.
+- [ ] Playlists and watch history load correctly.
+- [ ] Light and dark themes display correctly.
+- [ ] Layouts work on desktop and mobile.
+- [ ] Direct links and page refreshes work after deployment.
+
+## What I Learned
+
+Building HyperClip helped me connect a React interface to a backend with authentication, file uploads and background processing.
+
+I worked on reusable components, API integration, custom hooks and handling loading and error states. The video player also gave me experience with browser media events and preserving playback state when switching sources.
+
+I enjoy building frontend interfaces, and this project helped me think beyond appearance: how users understand progress, recover from errors and move through an application.
+
+## Author
+
+**Shashank Sharma**
+
+MERN Stack Developer · MCA Student
+
+Interested in building thoughtful interfaces and practical full-stack applications.
