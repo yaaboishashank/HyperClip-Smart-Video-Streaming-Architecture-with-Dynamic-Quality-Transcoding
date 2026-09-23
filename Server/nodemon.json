@@ -1,0 +1,11 @@
+{
+  "watch": ["src"],
+  "ext": "js,json",
+  "ignore": [
+    "storage/**",
+    "public/**",
+    "node_modules/**"
+  ],
+  "delay": "500",
+  "exec": "node -r dotenv/config"
+}
